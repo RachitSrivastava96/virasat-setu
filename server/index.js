@@ -83,8 +83,22 @@ const PORT = process.env.PORT || 5000;
 
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => {
+  .then(async () => {
     console.log("✅ MongoDB connected");
+    
+    // Fix googleId index issue (drop old unique index, recreate with partial filter)
+    try {
+      const User = mongoose.connection.collection("users");
+      await User.dropIndex("googleId_1");
+      console.log("✅ Dropped old googleId_1 index");
+    } catch (err) {
+      console.log("⚠️  googleId_1 index already fixed or doesn't exist");
+    }
+
+    // Ensure indexes are recreated with new schema
+    await mongoose.connection.model("User").createIndexes();
+    console.log("✅ Indexes synced");
+
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
     });
