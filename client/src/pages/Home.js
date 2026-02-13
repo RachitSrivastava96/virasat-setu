@@ -5,6 +5,8 @@ import AuthModal from "../components/AuthModal";
 export default function Home({ user, onLogin, onLogout }) {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [searchCity, setSearchCity] = useState("");
+  const [showLangMenu, setShowLangMenu] = useState(false);
+  const [selectedLang, setSelectedLang] = useState("en");
   const navigate = useNavigate();
 
   const handleSearch = (e) => {
@@ -13,6 +15,14 @@ export default function Home({ user, onLogin, onLogout }) {
       navigate(`/city/${searchCity.trim()}`);
     }
   };
+
+  const languages = [
+    { code: "en", name: "English", flag: "🇬🇧" },
+    { code: "hi", name: "हिन्दी", flag: "🇮🇳" },
+    { code: "mr", name: "मराठी", flag: "🇮🇳" },
+    { code: "ta", name: "தமிழ்", flag: "🇮🇳" },
+    { code: "bn", name: "বাংলা", flag: "🇮🇳" },
+  ];
 
   // Hot places - hardcoded (no API call needed)
   const hotPlaces = [
@@ -61,120 +71,285 @@ export default function Home({ user, onLogin, onLogout }) {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-slate-900 to-black text-white">
-      {/* Navigation */}
-      <nav className="flex justify-between items-center px-10 py-6">
-        <h1 className="text-2xl font-bold text-amber-400">
-          Virasat-Setu 🇮🇳
-        </h1>
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
+      {/* Decorative Pattern Background */}
+      <div className="fixed inset-0 opacity-5 pointer-events-none">
+        <div className="absolute top-0 left-0 w-full h-full" style={{
+          backgroundImage: `radial-gradient(circle, #f97316 1px, transparent 1px)`,
+          backgroundSize: '50px 50px'
+        }}></div>
+      </div>
 
-        {user ? (
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3">
-              <img
-                src={user.avatar}
-                alt={user.name}
-                className="w-10 h-10 rounded-full border-2 border-amber-400"
-              />
-              <div className="text-sm">
-                <div className="font-semibold">{user.name}</div>
-                <div className="text-gray-400 text-xs">{user.email}</div>
-              </div>
-            </div>
+      {/* Navigation */}
+      <nav className="relative flex justify-between items-center px-4 md:px-10 py-6 bg-white/80 backdrop-blur-md shadow-md border-b-4 border-orange-500">
+        <div className="flex items-center gap-3">
+          <div className="text-4xl">🪔</div>
+          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-orange-600 via-amber-500 to-orange-600 bg-clip-text text-transparent">
+            विरासत सेतु • Virasat Setu
+          </h1>
+        </div>
+
+        <div className="flex items-center gap-4">
+          {/* Language Selector */}
+          <div className="relative">
             <button
-              onClick={onLogout}
-              className="px-4 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition"
+              onClick={() => setShowLangMenu(!showLangMenu)}
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg font-semibold hover:from-orange-600 hover:to-amber-600 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
-              Logout
+              <span className="text-xl">{languages.find(l => l.code === selectedLang)?.flag}</span>
+              <span className="hidden md:inline">{languages.find(l => l.code === selectedLang)?.name}</span>
+              <span className="text-xs">▼</span>
             </button>
+            
+            {showLangMenu && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-2xl border-2 border-orange-200 z-50 overflow-hidden">
+                {languages.map((lang) => (
+                  <button
+                    key={lang.code}
+                    onClick={() => {
+                      setSelectedLang(lang.code);
+                      setShowLangMenu(false);
+                    }}
+                    className={`w-full px-4 py-3 text-left hover:bg-orange-50 transition-colors flex items-center gap-3 ${
+                      selectedLang === lang.code ? "bg-orange-100 font-semibold" : ""
+                    }`}
+                  >
+                    <span className="text-xl">{lang.flag}</span>
+                    <span className="text-gray-800">{lang.name}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-        ) : (
-          <button
-            onClick={() => setShowAuthModal(true)}
-            className="px-6 py-2 rounded-lg bg-amber-400 text-black font-semibold hover:bg-amber-300 transition"
-          >
-            Login / Sign Up
-          </button>
-        )}
+
+          {user ? (
+            <div className="flex items-center gap-4">
+              <div className="hidden md:flex items-center gap-3 bg-white px-4 py-2 rounded-lg shadow-md border-2 border-orange-200">
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="w-10 h-10 rounded-full border-2 border-orange-500 shadow-md"
+                />
+                <div className="text-sm">
+                  <div className="font-semibold text-gray-800">{user.name}</div>
+                  <div className="text-gray-500 text-xs">{user.email}</div>
+                </div>
+              </div>
+              <button
+                onClick={onLogout}
+                className="px-4 py-2 rounded-lg bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-300 shadow-lg hover:shadow-xl"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowAuthModal(true)}
+              className="px-6 py-2 rounded-lg bg-gradient-to-r from-orange-500 to-amber-500 text-white font-semibold hover:from-orange-600 hover:to-amber-600 transition-all duration-300 shadow-lg hover:shadow-xl"
+            >
+              Login / Sign Up
+            </button>
+          )}
+        </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center text-center mt-20 px-4">
-        <h2 className="text-5xl md:text-6xl font-extrabold mb-6">
-          Discover India,
-          <span className="text-amber-400"> Beyond Google Maps</span>
+      <section className="relative flex flex-col items-center justify-center text-center mt-12 md:mt-20 px-4">
+        {/* Decorative Elements */}
+        <div className="absolute top-10 left-10 w-32 h-32 bg-orange-200 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+        <div className="absolute bottom-10 right-10 w-40 h-40 bg-amber-200 rounded-full blur-3xl opacity-30 animate-pulse delay-300"></div>
+        
+        <div className="relative mb-6 animate-bounce-slow">
+          <div className="text-7xl md:text-8xl mb-4">🇮🇳</div>
+        </div>
+        
+        <h2 className="relative text-4xl md:text-6xl font-extrabold mb-6 text-gray-800 leading-tight">
+          Discover India's Soul,
+          <br />
+          <span className="bg-gradient-to-r from-orange-600 via-amber-500 to-orange-600 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
+            Beyond Tourist Maps
+          </span>
         </h2>
-        <p className="text-gray-400 max-w-2xl text-lg mb-10">
+        
+        <p className="relative text-gray-700 max-w-2xl text-lg md:text-xl mb-10 leading-relaxed">
           Explore hidden gems, local artisans, cultural hotspots, and authentic
-          experiences across India.
+          experiences across India. Connect with the heart of Bharat. 🪔
         </p>
 
         {/* Search Bar */}
-        <form onSubmit={handleSearch} className="flex gap-4 mb-16">
-          <input
-            value={searchCity}
-            onChange={(e) => setSearchCity(e.target.value)}
-            className="w-[320px] p-4 rounded-xl bg-slate-800 outline-none text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-400"
-            placeholder="Enter a city (e.g. Jaipur)"
-          />
+        <form onSubmit={handleSearch} className="relative flex flex-col md:flex-row gap-4 mb-16 w-full max-w-2xl">
+          <div className="relative flex-1">
+            <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-2xl">🔍</span>
+            <input
+              value={searchCity}
+              onChange={(e) => setSearchCity(e.target.value)}
+              className="w-full pl-14 pr-4 py-5 rounded-2xl bg-white border-3 border-orange-300 outline-none text-gray-800 placeholder-gray-500 focus:ring-4 focus:ring-orange-200 focus:border-orange-500 transition-all duration-300 shadow-lg text-lg font-medium"
+              placeholder="Enter a city (e.g. Jaipur, Varanasi, Udaipur)"
+            />
+          </div>
           <button
             type="submit"
-            className="px-8 py-4 rounded-xl bg-amber-400 text-black font-semibold hover:bg-amber-300 transition"
+            className="px-10 py-5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold text-lg hover:from-orange-600 hover:to-amber-600 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105 transform"
           >
-            Explore
+            Explore 🚀
           </button>
         </form>
 
         {/* Hot Places Section */}
-        <div className="w-full max-w-6xl">
-          <h3 className="text-3xl font-bold mb-8 text-left">
-            🔥 Hot Places to Visit
-          </h3>
+        <div className="relative w-full max-w-7xl px-4">
+          {/* Section Header */}
+          <div className="text-center mb-12">
+            <div className="inline-block px-6 py-2 bg-gradient-to-r from-orange-100 to-amber-100 rounded-full mb-4 border-2 border-orange-300">
+              <span className="text-orange-600 font-bold text-sm">TRENDING NOW</span>
+            </div>
+            <h3 className="text-4xl md:text-5xl font-bold mb-4 text-gray-800">
+              🔥 Hot Places to Visit
+            </h3>
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              Handpicked heritage destinations that showcase India's rich cultural tapestry
+            </p>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {hotPlaces.map((place) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {hotPlaces.map((place, index) => (
               <div
                 key={place.name}
                 onClick={() => navigate(`/city/${place.name}`)}
-                className="bg-slate-800 rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition-transform duration-300"
+                className="group relative bg-white rounded-2xl overflow-hidden cursor-pointer hover:shadow-2xl transition-all duration-500 border-3 border-orange-100 hover:border-orange-300 transform hover:-translate-y-2"
+                style={{ animationDelay: `${index * 100}ms` }}
               >
-                <img
-                  src={place.image}
-                  alt={place.name}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-5">
-                  <h4 className="text-xl font-bold mb-1">{place.name}</h4>
-                  <p className="text-amber-400 text-sm mb-2">{place.state}</p>
-                  <p className="text-gray-400 text-sm">{place.description}</p>
+                {/* Decorative Corner */}
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-orange-400 to-amber-400 opacity-20 rounded-bl-full"></div>
+                <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-orange-400 to-amber-400 opacity-20 rounded-tr-full"></div>
+                
+                {/* Image with Overlay */}
+                <div className="relative overflow-hidden">
+                  <img
+                    src={place.image}
+                    alt={place.name}
+                    className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+                  <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full">
+                    <span className="text-orange-600 font-bold text-sm">{place.state}</span>
+                  </div>
                 </div>
+                
+                <div className="p-6">
+                  <h4 className="text-2xl font-bold mb-2 text-gray-800 group-hover:text-orange-600 transition-colors">
+                    {place.name}
+                  </h4>
+                  <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                    {place.description}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-orange-500 font-semibold group-hover:underline">
+                      Explore More →
+                    </span>
+                    <span className="text-3xl group-hover:rotate-12 transition-transform duration-300">
+                      🗺️
+                    </span>
+                  </div>
+                </div>
+
+                {/* Hover Glow Effect */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-orange-400/0 to-amber-400/0 group-hover:from-orange-400/10 group-hover:to-amber-400/10 transition-all duration-500 pointer-events-none"></div>
               </div>
             ))}
           </div>
         </div>
 
         {/* Features */}
-        <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl">
-          <div className="bg-slate-800 p-6 rounded-xl">
-            <div className="text-4xl mb-3">🛕</div>
-            <h3 className="text-xl font-bold mb-2">Cultural Heritage</h3>
-            <p className="text-gray-400 text-sm">
-              Discover temples, monuments, and historical sites
-            </p>
+        <div className="relative mt-24 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl px-4 mb-20">
+          <div className="group relative bg-gradient-to-br from-orange-50 to-amber-50 p-8 rounded-2xl border-3 border-orange-200 hover:border-orange-400 transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-2">
+            {/* Decorative circles */}
+            <div className="absolute -top-4 -right-4 w-12 h-12 bg-orange-400 rounded-full opacity-20 group-hover:scale-150 transition-transform duration-500"></div>
+            <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-amber-400 rounded-full opacity-20 group-hover:scale-150 transition-transform duration-500"></div>
+            
+            <div className="relative">
+              <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300 inline-block">🛕</div>
+              <h3 className="text-2xl font-bold mb-3 text-gray-800 group-hover:text-orange-600 transition-colors">
+                Cultural Heritage
+              </h3>
+              <p className="text-gray-700 leading-relaxed">
+                Discover ancient temples, magnificent monuments, and historical sites that tell India's timeless stories
+              </p>
+              <div className="mt-4 flex gap-2">
+                <span className="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-semibold">Temples</span>
+                <span className="text-xs bg-amber-100 text-amber-700 px-3 py-1 rounded-full font-semibold">Forts</span>
+                <span className="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-semibold">Palaces</span>
+              </div>
+            </div>
           </div>
-          <div className="bg-slate-800 p-6 rounded-xl">
-            <div className="text-4xl mb-3">🎨</div>
-            <h3 className="text-xl font-bold mb-2">Local Artisans</h3>
-            <p className="text-gray-400 text-sm">
-              Meet craftspeople and traditional artists
-            </p>
+
+          <div className="group relative bg-gradient-to-br from-amber-50 to-orange-50 p-8 rounded-2xl border-3 border-amber-200 hover:border-amber-400 transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-2">
+            {/* Decorative circles */}
+            <div className="absolute -top-4 -right-4 w-12 h-12 bg-amber-400 rounded-full opacity-20 group-hover:scale-150 transition-transform duration-500"></div>
+            <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-orange-400 rounded-full opacity-20 group-hover:scale-150 transition-transform duration-500"></div>
+            
+            <div className="relative">
+              <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300 inline-block">🎨</div>
+              <h3 className="text-2xl font-bold mb-3 text-gray-800 group-hover:text-amber-600 transition-colors">
+                Local Artisans
+              </h3>
+              <p className="text-gray-700 leading-relaxed">
+                Meet master craftspeople and traditional artists preserving India's rich handicraft and art traditions
+              </p>
+              <div className="mt-4 flex gap-2">
+                <span className="text-xs bg-amber-100 text-amber-700 px-3 py-1 rounded-full font-semibold">Crafts</span>
+                <span className="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-semibold">Textiles</span>
+                <span className="text-xs bg-amber-100 text-amber-700 px-3 py-1 rounded-full font-semibold">Art</span>
+              </div>
+            </div>
           </div>
-          <div className="bg-slate-800 p-6 rounded-xl">
-            <div className="text-4xl mb-3">🍛</div>
-            <h3 className="text-xl font-bold mb-2">Authentic Food</h3>
-            <p className="text-gray-400 text-sm">
-              Find hidden local eateries and street food
-            </p>
+
+          <div className="group relative bg-gradient-to-br from-orange-50 to-amber-50 p-8 rounded-2xl border-3 border-orange-200 hover:border-orange-400 transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-2">
+            {/* Decorative circles */}
+            <div className="absolute -top-4 -right-4 w-12 h-12 bg-orange-400 rounded-full opacity-20 group-hover:scale-150 transition-transform duration-500"></div>
+            <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-amber-400 rounded-full opacity-20 group-hover:scale-150 transition-transform duration-500"></div>
+            
+            <div className="relative">
+              <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300 inline-block">🍛</div>
+              <h3 className="text-2xl font-bold mb-3 text-gray-800 group-hover:text-orange-600 transition-colors">
+                Authentic Food
+              </h3>
+              <p className="text-gray-700 leading-relaxed">
+                Find hidden local eateries, street food treasures, and authentic regional cuisines that tourists miss
+              </p>
+              <div className="mt-4 flex gap-2">
+                <span className="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-semibold">Street Food</span>
+                <span className="text-xs bg-amber-100 text-amber-700 px-3 py-1 rounded-full font-semibold">Cuisine</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* CTA Section */}
+        <div className="relative w-full max-w-4xl px-4 mb-20">
+          <div className="relative bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 rounded-3xl p-12 text-center overflow-hidden shadow-2xl">
+            {/* Decorative elements */}
+            <div className="absolute top-0 left-0 w-full h-full opacity-10">
+              <div className="absolute top-4 left-4 text-8xl">🪔</div>
+              <div className="absolute bottom-4 right-4 text-8xl">🕉️</div>
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-9xl opacity-50">🇮🇳</div>
+            </div>
+            
+            <div className="relative z-10">
+              <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                Ready to Explore Bharat's Soul?
+              </h3>
+              <p className="text-white/90 text-lg mb-6 max-w-2xl mx-auto">
+                Join thousands of travelers discovering India's authentic experiences beyond the guidebooks
+              </p>
+              {!user && (
+                <button
+                  onClick={() => setShowAuthModal(true)}
+                  className="px-10 py-4 bg-white text-orange-600 font-bold text-lg rounded-2xl hover:bg-orange-50 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-110 transform inline-flex items-center gap-3"
+                >
+                  Start Your Journey 🚀
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </section>
