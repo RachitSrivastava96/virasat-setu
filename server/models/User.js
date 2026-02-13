@@ -5,9 +5,7 @@ const userSchema = new mongoose.Schema(
     // OAuth fields
     googleId: {
       type: String,
-      sparse: true, // Allows null values, but enforces uniqueness when present
-      unique: true,
-      index: true,
+      sparse: true,
     },
     
     // Email/Password fields
@@ -58,6 +56,15 @@ const userSchema = new mongoose.Schema(
   },
   {
     timestamps: true, // Adds createdAt and updatedAt
+  }
+);
+
+// Unique index on googleId only when it exists (not null)
+userSchema.index(
+  { googleId: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { googleId: { $type: "string" } },
   }
 );
 
