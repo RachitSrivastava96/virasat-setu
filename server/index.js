@@ -82,22 +82,25 @@ if (process.env.NODE_ENV === "production") {
 const PORT = process.env.PORT || 5000;
 
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(process.env.MONGO_URI, {
+    autoIndex: false, // Disable auto index creation during connection
+  })
   .then(async () => {
     console.log("✅ MongoDB connected");
     
-    // Fix googleId index issue (drop old unique index, recreate with partial filter)
+    // Fix googleId index issue (drop old unique index before recreating)
     try {
       const User = mongoose.connection.collection("users");
       await User.dropIndex("googleId_1");
       console.log("✅ Dropped old googleId_1 index");
     } catch (err) {
-      console.log("⚠️  googleId_1 index already fixed or doesn't exist");
+      console.log("⚠️  googleId_1 index doesn't exist (already fixed)");
     }
 
-    // Ensure indexes are recreated with new schema
-    await mongoose.connection.model("User").createIndexes();
-    console.log("✅ Indexes synced");
+    // Now manually create indexes with the new schema
+    const UserModel = require("./models/User");
+    await UserModel.createIndexes();
+    console.log("✅ Indexes synced with new schema");
 
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
