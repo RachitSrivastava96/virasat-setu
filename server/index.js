@@ -88,16 +88,16 @@ mongoose
   .then(async () => {
     console.log("✅ MongoDB connected");
     
-    // Fix googleId index issue (drop old unique index before recreating)
+    // Drop the problematic old googleId_1 index (sparse: true)
     try {
       const User = mongoose.connection.collection("users");
       await User.dropIndex("googleId_1");
       console.log("✅ Dropped old googleId_1 index");
     } catch (err) {
-      console.log("⚠️  googleId_1 index doesn't exist (already fixed)");
+      console.log("⚠️  googleId_1 index doesn't exist or already dropped");
     }
 
-    // Now manually create indexes with the new schema
+    // Now create indexes with new schema (will create googleId_partial_unique)
     const UserModel = require("./models/User");
     await UserModel.createIndexes();
     console.log("✅ Indexes synced with new schema");

@@ -60,9 +60,11 @@ const userSchema = new mongoose.Schema(
 );
 
 // Unique index on googleId only when it exists (not null)
+// Using a custom name to avoid conflicts with old sparse index
 userSchema.index(
   { googleId: 1 },
   {
+    name: "googleId_partial_unique",
     unique: true,
     partialFilterExpression: { googleId: { $type: "string" } },
   }
