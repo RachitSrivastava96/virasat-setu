@@ -14,21 +14,17 @@ const app = express();
    MIDDLEWARE
 ===================== */
 
-// Behind Render's proxy, trust the first proxy so that
-// req.secure is correctly set and secure cookies work.
 app.set("trust proxy", 1);
 
-// CORS
 app.use(
   cors({
-    origin: true, // allow all origins (safe for hackathon)
+    origin: true,
     credentials: true,
   })
 );
 
 app.use(express.json());
 
-// Session middleware (REQUIRED for OAuth)
 app.use(
   session({
     name: "virasat-setu-session",
@@ -37,13 +33,12 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // HTTPS on Render
+      secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     },
   })
 );
 
-// Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -51,36 +46,30 @@ app.use(passport.session());
    ROUTES
 ===================== */
 
-// Health check (VERY IMPORTANT for Render)
 app.get("/health", (req, res) => {
   res.status(200).send("OK");
 });
 
-// Auth & API routes
 app.use("/auth", require("./routes/authRoutes"));
-app.use("/auth", require("./routes/localAuthRoutes")); // Email/password auth
+app.use("/auth", require("./routes/localAuthRoutes"));
 app.use("/api/places", require("./routes/placeRoutes"));
 
 /* =====================
    PRODUCTION DEPLOYMENT SETUP
 ===================== */
 
-// In production, serve the React build from client/dist so
-// that frontend and backend share the same origin.
 if (process.env.NODE_ENV === "production") {
-  // FIX 1: Changed "build" to "dist" because you are using Vite
-  const clientBuildPath = path.join(__dirname, "..", "client", "dist");
+  // 1. Point to "build" (Confirmed by your logs: "react-scripts build")
+  const clientBuildPath = path.join(__dirname, "..", "client", "build");
 
-  // Serve static assets
   app.use(express.static(clientBuildPath));
 
-  // For any non-API route, serve index.html from the React build
-  // FIX 2: Changed "/*" to "*" to fix the 'Missing parameter' crash
-  app.get("*", (req, res) => {
+  // 2. CRITICAL FIX: Use Regex /.*/ instead of "*" or "/*"
+  // This bypasses the "Missing parameter name" error completely.
+  app.get(/.*/, (req, res) => {
     res.sendFile(path.join(clientBuildPath, "index.html"));
   });
 } else {
-  // Development mode root route
   app.get("/", (req, res) => {
     res.send("API is running in Development mode");
   });
@@ -96,13 +85,11 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("✅ MongoDB connected");
-
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
     });
   })
   .catch((err) => {
-    console.error("❌ MongoDB connection error:");
-    console.error(err.message);
-    process.exit(1); // crash on DB failure (important for Render)
+    console.error("❌ MongoDB connection error:", err.message);
+    process.exit(1);
   });
