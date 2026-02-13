@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthModal from "../components/AuthModal";
+import { t } from "../utils/translations";
 
 export default function Home({ user, onLogin, onLogout }) {
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -139,7 +140,7 @@ export default function Home({ user, onLogin, onLogout }) {
                 onClick={onLogout}
                 className="px-4 py-2 rounded-lg bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-300 shadow-lg hover:shadow-xl"
               >
-                Logout
+                {t(selectedLang, 'logout')}
               </button>
             </div>
           ) : (
@@ -147,7 +148,7 @@ export default function Home({ user, onLogin, onLogout }) {
               onClick={() => setShowAuthModal(true)}
               className="px-6 py-2 rounded-lg bg-gradient-to-r from-orange-500 to-amber-500 text-white font-semibold hover:from-orange-600 hover:to-amber-600 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
-              Login / Sign Up
+              {t(selectedLang, 'login')}
             </button>
           )}
         </div>
@@ -164,16 +165,15 @@ export default function Home({ user, onLogin, onLogout }) {
         </div>
         
         <h2 className="relative text-4xl md:text-6xl font-extrabold mb-6 text-gray-800 leading-tight">
-          Discover India's Soul,
+          {t(selectedLang, 'discoverIndia')}
           <br />
           <span className="bg-gradient-to-r from-orange-600 via-amber-500 to-orange-600 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
-            Beyond Tourist Maps
+            {t(selectedLang, 'beyondMaps')}
           </span>
         </h2>
         
         <p className="relative text-gray-700 max-w-2xl text-lg md:text-xl mb-10 leading-relaxed">
-          Explore hidden gems, local artisans, cultural hotspots, and authentic
-          experiences across India. Connect with the heart of Bharat. 🪔
+          {t(selectedLang, 'exploreText')}
         </p>
 
         {/* Search Bar */}
@@ -184,14 +184,14 @@ export default function Home({ user, onLogin, onLogout }) {
               value={searchCity}
               onChange={(e) => setSearchCity(e.target.value)}
               className="w-full pl-14 pr-4 py-5 rounded-2xl bg-white border-3 border-orange-300 outline-none text-gray-800 placeholder-gray-500 focus:ring-4 focus:ring-orange-200 focus:border-orange-500 transition-all duration-300 shadow-lg text-lg font-medium"
-              placeholder="Enter a city (e.g. Jaipur, Varanasi, Udaipur)"
+              placeholder={t(selectedLang, 'searchPlaceholder')}
             />
           </div>
           <button
             type="submit"
             className="px-10 py-5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold text-lg hover:from-orange-600 hover:to-amber-600 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105 transform"
           >
-            Explore 🚀
+            {t(selectedLang, 'exploreButton')}
           </button>
         </form>
 
@@ -200,13 +200,13 @@ export default function Home({ user, onLogin, onLogout }) {
           {/* Section Header */}
           <div className="text-center mb-12">
             <div className="inline-block px-6 py-2 bg-gradient-to-r from-orange-100 to-amber-100 rounded-full mb-4 border-2 border-orange-300">
-              <span className="text-orange-600 font-bold text-sm">TRENDING NOW</span>
+              <span className="text-orange-600 font-bold text-sm">{t(selectedLang, 'trendingNow')}</span>
             </div>
             <h3 className="text-4xl md:text-5xl font-bold mb-4 text-gray-800">
-              🔥 Hot Places to Visit
+              🔥 {t(selectedLang, 'hotPlaces')}
             </h3>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              Handpicked heritage destinations that showcase India's rich cultural tapestry
+              {t(selectedLang, 'hotPlacesDesc')}
             </p>
           </div>
 
@@ -244,7 +244,7 @@ export default function Home({ user, onLogin, onLogout }) {
                   </p>
                   <div className="flex items-center justify-between">
                     <span className="text-orange-500 font-semibold group-hover:underline">
-                      Explore More →
+                      {t(selectedLang, 'exploreMore')}
                     </span>
                     <span className="text-3xl group-hover:rotate-12 transition-transform duration-300">
                       🗺️
@@ -269,15 +269,15 @@ export default function Home({ user, onLogin, onLogout }) {
             <div className="relative">
               <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300 inline-block">🛕</div>
               <h3 className="text-2xl font-bold mb-3 text-gray-800 group-hover:text-orange-600 transition-colors">
-                Cultural Heritage
+                {t(selectedLang, 'culturalHeritage')}
               </h3>
               <p className="text-gray-700 leading-relaxed">
-                Discover ancient temples, magnificent monuments, and historical sites that tell India's timeless stories
+                {t(selectedLang, 'culturalHeritageDesc')}
               </p>
               <div className="mt-4 flex gap-2">
-                <span className="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-semibold">Temples</span>
-                <span className="text-xs bg-amber-100 text-amber-700 px-3 py-1 rounded-full font-semibold">Forts</span>
-                <span className="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-semibold">Palaces</span>
+                <span className="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-semibold">{t(selectedLang, 'temples')}</span>
+                <span className="text-xs bg-amber-100 text-amber-700 px-3 py-1 rounded-full font-semibold">{t(selectedLang, 'forts')}</span>
+                <span className="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-semibold">{t(selectedLang, 'palaces')}</span>
               </div>
             </div>
           </div>
@@ -290,15 +290,15 @@ export default function Home({ user, onLogin, onLogout }) {
             <div className="relative">
               <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300 inline-block">🎨</div>
               <h3 className="text-2xl font-bold mb-3 text-gray-800 group-hover:text-amber-600 transition-colors">
-                Local Artisans
+                {t(selectedLang, 'localArtisans')}
               </h3>
               <p className="text-gray-700 leading-relaxed">
-                Meet master craftspeople and traditional artists preserving India's rich handicraft and art traditions
+                {t(selectedLang, 'localArtisansDesc')}
               </p>
               <div className="mt-4 flex gap-2">
-                <span className="text-xs bg-amber-100 text-amber-700 px-3 py-1 rounded-full font-semibold">Crafts</span>
-                <span className="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-semibold">Textiles</span>
-                <span className="text-xs bg-amber-100 text-amber-700 px-3 py-1 rounded-full font-semibold">Art</span>
+                <span className="text-xs bg-amber-100 text-amber-700 px-3 py-1 rounded-full font-semibold">{t(selectedLang, 'crafts')}</span>
+                <span className="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-semibold">{t(selectedLang, 'textiles')}</span>
+                <span className="text-xs bg-amber-100 text-amber-700 px-3 py-1 rounded-full font-semibold">{t(selectedLang, 'art')}</span>
               </div>
             </div>
           </div>
@@ -311,14 +311,14 @@ export default function Home({ user, onLogin, onLogout }) {
             <div className="relative">
               <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300 inline-block">🍛</div>
               <h3 className="text-2xl font-bold mb-3 text-gray-800 group-hover:text-orange-600 transition-colors">
-                Authentic Food
+                {t(selectedLang, 'authenticFood')}
               </h3>
               <p className="text-gray-700 leading-relaxed">
-                Find hidden local eateries, street food treasures, and authentic regional cuisines that tourists miss
+                {t(selectedLang, 'authenticFoodDesc')}
               </p>
               <div className="mt-4 flex gap-2">
-                <span className="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-semibold">Street Food</span>
-                <span className="text-xs bg-amber-100 text-amber-700 px-3 py-1 rounded-full font-semibold">Cuisine</span>
+                <span className="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-semibold">{t(selectedLang, 'streetFood')}</span>
+                <span className="text-xs bg-amber-100 text-amber-700 px-3 py-1 rounded-full font-semibold">{t(selectedLang, 'cuisine')}</span>
               </div>
             </div>
           </div>
@@ -336,17 +336,17 @@ export default function Home({ user, onLogin, onLogout }) {
             
             <div className="relative z-10">
               <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                Ready to Explore Bharat's Soul?
+                {t(selectedLang, 'readyToExplore')}
               </h3>
               <p className="text-white/90 text-lg mb-6 max-w-2xl mx-auto">
-                Join thousands of travelers discovering India's authentic experiences beyond the guidebooks
+                {t(selectedLang, 'readyToExploreDesc')}
               </p>
               {!user && (
                 <button
                   onClick={() => setShowAuthModal(true)}
                   className="px-10 py-4 bg-white text-orange-600 font-bold text-lg rounded-2xl hover:bg-orange-50 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-110 transform inline-flex items-center gap-3"
                 >
-                  Start Your Journey 🚀
+                  {t(selectedLang, 'startJourney')}
                 </button>
               )}
             </div>

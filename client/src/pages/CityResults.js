@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { placesService } from "../services/places";
+import { t } from "../utils/translations";
 
 export default function CityResults({ user, onLogout }) {
   const { cityName } = useParams();
@@ -32,10 +33,25 @@ export default function CityResults({ user, onLogout }) {
       console.log("City data received:", data); // Debug log
       setCityData(data);
     } catch (err) {
-      setError("Failed to load city data. Please try again.");
+      setError(t(selectedLang, 'cityNotFound'));
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleViewOnMap = () => {
+    if (cityData && cityData.city) {
+      const { latitude, longitude, name } = cityData.city;
+      if (latitude && longitude) {
+        // Open Google Maps with coordinates
+        const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+        window.open(mapsUrl, '_blank');
+      } else {
+        // Fallback to search by city name
+        const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}`;
+        window.open(mapsUrl, '_blank');
+      }
     }
   };
 
@@ -45,10 +61,10 @@ export default function CityResults({ user, onLogout }) {
         <div className="text-center">
           <div className="text-7xl animate-bounce mb-6">🗺️</div>
           <div className="text-3xl font-bold text-gray-800 animate-pulse mb-4">
-            Loading {cityName}...
+            {t(selectedLang, 'loading')} {cityName}...
           </div>
           <div className="text-gray-600 text-lg">
-            Fetching heritage sites, artisans, and local gems... 🪔
+            {t(selectedLang, 'fetchingData')}
           </div>
           <div className="mt-6 flex gap-2 justify-center">
             <div className="w-3 h-3 bg-orange-500 rounded-full animate-bounce"></div>
@@ -66,16 +82,16 @@ export default function CityResults({ user, onLogout }) {
         <div className="text-center bg-white p-12 rounded-3xl shadow-2xl border-3 border-orange-200 max-w-md">
           <div className="text-8xl mb-6 animate-bounce">😕</div>
           <h2 className="text-3xl font-bold text-gray-800 mb-4">
-            {error || "City not found"}
+            {error || t(selectedLang, 'cityNotFound')}
           </h2>
           <p className="text-gray-600 mb-8">
-            We couldn't find information about this city. Try searching for another heritage destination.
+            {t(selectedLang, 'cityNotFoundDesc')}
           </p>
           <button
             onClick={() => navigate("/")}
             className="px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-2xl font-bold text-lg hover:from-orange-600 hover:to-amber-600 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 transform"
           >
-            🏠 Go Back Home
+            {t(selectedLang, 'goBackHome')}
           </button>
         </div>
       </div>
@@ -162,7 +178,7 @@ export default function CityResults({ user, onLogout }) {
                 onClick={onLogout}
                 className="px-4 py-2 rounded-lg bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-300 shadow-lg hover:shadow-xl"
               >
-                Logout
+                {t(selectedLang, 'logout')}
               </button>
             </div>
           )}
@@ -182,7 +198,7 @@ export default function CityResults({ user, onLogout }) {
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-white/90 mb-6 text-sm md:text-base">
             <button onClick={() => navigate("/")} className="hover:text-white hover:underline">
-              Home
+              {t(selectedLang, 'home')}
             </button>
             <span>→</span>
             <span className="font-semibold text-white">{city.name}</span>
@@ -203,11 +219,14 @@ export default function CityResults({ user, onLogout }) {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-white text-orange-600 rounded-xl font-bold hover:bg-orange-50 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 transform"
               >
-                📖 Read More on Wikipedia
+                {t(selectedLang, 'readMoreWiki')}
               </a>
             )}
-            <button className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-sm text-white rounded-xl font-bold hover:bg-white/30 transition-all duration-300 border-2 border-white/30">
-              📍 View on Map
+            <button 
+              onClick={handleViewOnMap}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-sm text-white rounded-xl font-bold hover:bg-white/30 transition-all duration-300 border-2 border-white/30 hover:scale-105 transform"
+            >
+              {t(selectedLang, 'viewOnMap')}
             </button>
           </div>
         </div>
@@ -220,14 +239,14 @@ export default function CityResults({ user, onLogout }) {
             {/* Section Header */}
             <div className="mb-10">
               <div className="inline-block px-6 py-2 bg-gradient-to-r from-orange-100 to-amber-100 rounded-full mb-4 border-2 border-orange-300">
-                <span className="text-orange-600 font-bold text-sm">HERITAGE SITES</span>
+                <span className="text-orange-600 font-bold text-sm">{t(selectedLang, 'heritageSites')}</span>
               </div>
               <h2 className="text-4xl font-bold mb-3 text-gray-800 flex items-center gap-4">
                 <span className="text-5xl">🛕</span>
-                Monuments & Heritage Sites
+                {t(selectedLang, 'monumentsTitle')}
               </h2>
               <p className="text-gray-600 text-lg">
-                Ancient architectural marvels and historical landmarks of {city.name}
+                {t(selectedLang, 'monumentsDesc')} {city.name}
               </p>
             </div>
 
@@ -287,14 +306,14 @@ export default function CityResults({ user, onLogout }) {
             {/* Section Header */}
             <div className="mb-10">
               <div className="inline-block px-6 py-2 bg-gradient-to-r from-amber-100 to-orange-100 rounded-full mb-4 border-2 border-amber-300">
-                <span className="text-amber-600 font-bold text-sm">LOCAL CRAFTSPEOPLE</span>
+                <span className="text-amber-600 font-bold text-sm">{t(selectedLang, 'localCraftspeople')}</span>
               </div>
               <h2 className="text-4xl font-bold mb-3 text-gray-800 flex items-center gap-4">
                 <span className="text-5xl">🎨</span>
-                Local Artisans & Craftspeople
+                {t(selectedLang, 'artisansTitle')}
               </h2>
               <p className="text-gray-600 text-lg">
-                Meet the master artisans preserving {city.name}'s traditional crafts and art forms
+                {t(selectedLang, 'artisansDesc')} {city.name}{t(selectedLang, 'artisansDescSuffix')}
               </p>
             </div>
 
@@ -359,14 +378,14 @@ export default function CityResults({ user, onLogout }) {
             {/* Section Header */}
             <div className="mb-10">
               <div className="inline-block px-6 py-2 bg-gradient-to-r from-orange-100 to-amber-100 rounded-full mb-4 border-2 border-orange-300">
-                <span className="text-orange-600 font-bold text-sm">CULINARY DELIGHTS</span>
+                <span className="text-orange-600 font-bold text-sm">{t(selectedLang, 'culinaryDelights')}</span>
               </div>
               <h2 className="text-4xl font-bold mb-3 text-gray-800 flex items-center gap-4">
                 <span className="text-5xl">🍛</span>
-                Authentic Food Spots
+                {t(selectedLang, 'foodTitle')}
               </h2>
               <p className="text-gray-600 text-lg">
-                Savor the authentic flavors and traditional cuisines of {city.name}
+                {t(selectedLang, 'foodDesc')} {city.name}
               </p>
             </div>
 
@@ -423,14 +442,14 @@ export default function CityResults({ user, onLogout }) {
             {/* Section Header */}
             <div className="mb-10">
               <div className="inline-block px-6 py-2 bg-gradient-to-r from-amber-100 to-orange-100 rounded-full mb-4 border-2 border-amber-300">
-                <span className="text-amber-600 font-bold text-sm">ACCOMMODATIONS</span>
+                <span className="text-amber-600 font-bold text-sm">{t(selectedLang, 'accommodations')}</span>
               </div>
               <h2 className="text-4xl font-bold mb-3 text-gray-800 flex items-center gap-4">
                 <span className="text-5xl">🏨</span>
-                Places to Stay
+                {t(selectedLang, 'hotelsTitle')}
               </h2>
               <p className="text-gray-600 text-lg">
-                Comfortable stays and heritage hotels in {city.name}
+                {t(selectedLang, 'hotelsDesc')} {city.name}
               </p>
             </div>
 
@@ -483,17 +502,16 @@ export default function CityResults({ user, onLogout }) {
             <div className="text-center py-20 bg-white rounded-3xl shadow-xl border-3 border-orange-200 mx-4">
               <div className="text-8xl mb-6 animate-pulse">🔍</div>
               <h3 className="text-3xl font-bold mb-4 text-gray-800">
-                No data available yet
+                {t(selectedLang, 'noData')}
               </h3>
               <p className="text-gray-600 text-lg mb-8 max-w-md mx-auto">
-                We're still gathering information about {cityName}. Check back
-                soon for heritage sites, artisans, and local experiences! 🪔
+                {t(selectedLang, 'noDataDesc')} {cityName}{t(selectedLang, 'noDataDescSuffix')}
               </p>
               <button
                 onClick={() => navigate("/")}
                 className="px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-2xl font-bold text-lg hover:from-orange-600 hover:to-amber-600 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 transform"
               >
-                Explore Other Cities
+                {t(selectedLang, 'exploreOtherCities')}
               </button>
             </div>
           )}
