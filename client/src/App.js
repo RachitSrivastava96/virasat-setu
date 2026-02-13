@@ -4,12 +4,10 @@ import { authService } from "./services/auth";
 import AuthModal from "./components/AuthModal";
 import Home from "./pages/Home";
 import CityResults from "./pages/CityResults";
-import LoggedOutHome from "./pages/LoggedOutHome";
 
 export default function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showAuthModal, setShowAuthModal] = useState(false);
 
   // Check authentication on mount
   useEffect(() => {
@@ -45,16 +43,16 @@ export default function App() {
     );
   }
 
+  // Require authentication before showing any part of the app
   if (!user) {
     return (
-      <>
-        <LoggedOutHome onLoginClick={() => setShowAuthModal(true)} />
-        <AuthModal
-          isOpen={showAuthModal}
-          onClose={() => setShowAuthModal(false)}
-          onSuccess={handleLogin}
-        />
-      </>
+      <AuthModal
+        isOpen={true}
+        // For the auth gate we don't allow closing without login,
+        // so onClose is a no-op.
+        onClose={() => {}}
+        onSuccess={handleLogin}
+      />
     );
   }
 
