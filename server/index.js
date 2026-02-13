@@ -18,7 +18,7 @@ const app = express();
 // req.secure is correctly set and secure cookies work.
 app.set("trust proxy", 1);
 
-// COR
+// CORS
 app.use(
   cors({
     origin: true, // allow all origins (safe for hackathon)
@@ -56,28 +56,33 @@ app.get("/health", (req, res) => {
   res.status(200).send("OK");
 });
 
-// Root test route
-app.get("/", (req, res) => {
-  res.send("Server running");
-});
-
-// Auth routes
+// Auth & API routes
 app.use("/auth", require("./routes/authRoutes"));
 app.use("/auth", require("./routes/localAuthRoutes")); // Email/password auth
 app.use("/api/places", require("./routes/placeRoutes"));
 
-// In production, serve the React build from client/build so
+/* =====================
+   PRODUCTION DEPLOYMENT SETUP
+===================== */
+
+// In production, serve the React build from client/dist so
 // that frontend and backend share the same origin.
 if (process.env.NODE_ENV === "production") {
-  const clientBuildPath = path.join(__dirname, "..", "client", "build");
+  // FIX 1: Changed "build" to "dist" because you are using Vite
+  const clientBuildPath = path.join(__dirname, "..", "client", "dist");
 
   // Serve static assets
   app.use(express.static(clientBuildPath));
 
   // For any non-API route, serve index.html from the React build
-  // Use \"/*\" instead of \"*\" for Express 5 compatibility.
-  app.get("/*", (req, res) => {
+  // FIX 2: Changed "/*" to "*" to fix the 'Missing parameter' crash
+  app.get("*", (req, res) => {
     res.sendFile(path.join(clientBuildPath, "index.html"));
+  });
+} else {
+  // Development mode root route
+  app.get("/", (req, res) => {
+    res.send("API is running in Development mode");
   });
 }
 
