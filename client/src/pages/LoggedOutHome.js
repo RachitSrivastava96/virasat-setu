@@ -1,12 +1,4 @@
-import { useState } from "react";
-
 export default function LoggedOutHome({ onLoginClick }) {
-  const [email, setEmail] = useState("");
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onLoginClick();
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-slate-900 to-black text-white">
@@ -34,40 +26,6 @@ export default function LoggedOutHome({ onLoginClick }) {
               beyond the usual tourist trail. Log in to personalize your journey.
             </p>
 
-            <div className="flex flex-wrap gap-4 mb-10">
-              <button
-                onClick={onLoginClick}
-                className="px-8 py-4 rounded-xl bg-amber-400 text-black font-semibold hover:bg-amber-300 transition"
-              >
-                Get Started
-              </button>
-              <button
-                onClick={onLoginClick}
-                className="px-8 py-4 rounded-xl border border-amber-400 text-amber-400 font-semibold hover:bg-amber-400 hover:text-black transition"
-              >
-                Explore as Guest
-              </button>
-            </div>
-
-            <form
-              onSubmit={handleSubmit}
-              className="flex flex-col sm:flex-row gap-3 bg-slate-900/60 p-3 rounded-2xl max-w-lg"
-            >
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 px-4 py-3 rounded-xl bg-slate-800 text-white outline-none focus:ring-2 focus:ring-amber-400"
-                placeholder="Enter email for early access"
-                required
-              />
-              <button
-                type="submit"
-                className="px-6 py-3 rounded-xl bg-white text-black font-semibold hover:opacity-90 transition"
-              >
-                Notify Me
-              </button>
-            </form>
           </div>
 
           <div className="grid grid-cols-2 gap-5">
